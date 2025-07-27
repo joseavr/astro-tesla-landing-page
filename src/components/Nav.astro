@@ -1,0 +1,101 @@
+---
+import Logo from './Logo.astro'
+---
+
+<header
+	id="navbar"
+	class="py-4 px-10 flex items-center fixed top-0 w-full justify-between z-40 text-white"
+>
+	<Logo />
+
+	<nav>
+		<!-- text-current inherits the color from parent  -->
+		<ul
+			class="flex text-sm [&>li>a]:text-current [&>li>a]:inline-block [&>li>a]:px-4 [&>li>a]:py-2 [&>li>a]:transition-colors [&>li>a]:duration-300"
+		>
+			<li>
+				<a href="" class="relative">Model S</a>
+			</li>
+			<li><a href="">Model 3</a></li>
+			<li><a href="">Model X</a></li>
+			<li><a href="">Model Y</a></li>
+			<li><a href="">Powerwall</a></li>
+			<li><a href="">Carga</a></li>
+		</ul>
+	</nav>
+
+	<nav class="flex flex-grow basis-0 justify-end">
+		<ul
+			class="flex text-sm [&>li>a]:text-current [&>li>a]:inline-block [&>li>a]:px-4 [&>li>a]:py-2 [&>li>a]:transition-colors [&>li>a]:duration-300"
+		>
+			<li><a href="">Shop</a></li>
+			<li><a href="">Account</a></li>
+			<li><a href="">Menu</a></li>
+		</ul>
+	</nav>
+
+	<!-- Hover box backdrop -->
+	<div
+		id="hover-box"
+		class="absolute bg-black/5 backdrop-blur-lg rounded-md left-0 top-0 translate-x-[var(--left)] translate-y-[var(--top)] w-[var(--width)] h-[var(--height)] transition-all duration-300 ease-in-out opacity-0 -z-10"
+	>
+	</div>
+</header>
+
+<!-- JS for hover box -->
+<script>
+	const listItem = document.querySelectorAll('#navbar li')
+	const hoverBox = document.querySelector('#hover-box') as HTMLElement
+
+	listItem.forEach((item) => {
+		item.addEventListener('mouseenter', () => {
+			const { top, left, height, width } = item.getBoundingClientRect()
+			const { clientHeight, clientWidth } = item
+
+			console.log(left, top, height, width)
+			console.log(clientHeight, clientWidth)
+
+			hoverBox.style.setProperty('--left', `${left}px`)
+			hoverBox.style.setProperty('--top', `${top}px`)
+			hoverBox.style.setProperty('--width', `${width}px`)
+			hoverBox.style.setProperty('--height', `${height}px`)
+
+			hoverBox.style.opacity = '1'
+			hoverBox.style.visibility = 'visible'
+		})
+
+		item.addEventListener('mouseleave', () => {
+			hoverBox.style.opacity = '0'
+			hoverBox.style.visibility = 'hidden'
+		})
+	})
+</script>
+
+<!-- JS for changing color when viewport changes section -->
+<script>
+	const navbar = document.querySelector('#navbar') as HTMLElement
+
+	const observerOptions = {
+		root: null, // observe a specific HTML element, null = viewport
+		rootMargin: '0px', // element is just visible
+		threshold: 0.9 // visibility percentage
+	}
+
+	// the observer
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach((entry) => {
+			const { isIntersecting } = entry
+
+			if (isIntersecting) {
+				const color = entry.target.getAttribute('data-header-color')
+				navbar.style.color = color
+			}
+		})
+	}, observerOptions)
+
+	const sections = document.querySelectorAll('.landing-section')
+	sections.forEach((section) => {
+		console.log(section)
+		observer.observe(section)
+	})
+</script>
